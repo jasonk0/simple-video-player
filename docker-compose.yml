@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+      - "8080:8080"  # 前端开发服务器端口
+    environment:
+      - SQL_DSN=root:mysql_password@tcp(db:3306)/videoplayer
+      - API_PORT=3001
+      - ADMIN_PASSWORD=admin123
+      - LOGIN_JWT_SECRET_KEY=your_secret_key
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - ./dist:/app/dist
+    restart: always
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql_password
+      - MYSQL_DATABASE=videoplayer
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data: 

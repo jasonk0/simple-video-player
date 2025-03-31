@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+      - "8080:8080"  # 前端开发服务器端口
+    environment:
+      - PG_CONNECTION_STRING=postgresql://postgres:postgres@db:5432/videoplayer
+      - PG_TABLE_NAME=configs
+      - API_PORT=3001
+      - ADMIN_PASSWORD=admin123
+      - LOGIN_JWT_SECRET_KEY=your_secret_key
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - ./dist:/app/dist
+    restart: always
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=videoplayer
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: 
